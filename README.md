@@ -8,8 +8,7 @@ API de pagamento integrada ao Mercado Pago.
 - Em **dev**, retorna um `init_point` fake:
 https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=MOCK
 
-markdown
-Copiar código
+
 - Em **prod**, usa o gateway real e precisa de token válido.
 
 ## 🔹 Profiles Spring
