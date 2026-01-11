@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class PagamentoStatusDTO {
+public class PaymentStatusDTO {
 
     private Long externalId;
     private String status;
