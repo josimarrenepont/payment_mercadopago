@@ -1,17 +1,13 @@
 package com.projeto.mercadopago.payment.dto;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.math.BigDecimal;
+import java.time.Instant;
 
-@Data
-@Builder
-public class PaymentStatusDTO {
-
-    private Long externalId;
-    private String status;
-    private BigDecimal transactionAmount;
-    private String currency;
-    private String dateCreated;
+public record PaymentStatusDTO(
+        Long externalId,
+        String status,
+        BigDecimal transactionAmount,
+        String currency,
+        Instant dateCreated
+) {
 }

@@ -48,10 +48,11 @@ public class MercadoPagoClient implements MercadoPagoGateway {
 
         Map body = response.getBody();
 
-        if (body == null || !body.containsKey("init_point")) {
+        Object initPoint = body.get("init_point");
+        if (initPoint == null) {
             throw new IntegrationException("Failed to create checkout preference");
         }
 
-        return body.get("init_point").toString();
+        return initPoint.toString();
     }
 }
