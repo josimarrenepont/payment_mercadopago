@@ -1,6 +1,6 @@
 package com.projeto.mercadopago.payment.entity;
 
-import com.projeto.mercadopago.payment.domain.Payment;
+import com.projeto.mercadopago.payment.core.domain.Payment;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "payments")
-@Getter
-@Setter
 @NoArgsConstructor
 public class PaymentEntity {
 
@@ -22,7 +20,32 @@ public class PaymentEntity {
     private String status;
     private BigDecimal transactionAmount;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public BigDecimal getTransactionAmount() {
+        return transactionAmount;
+    }
+
+    public void setTransactionAmount(BigDecimal transactionAmount) {
+        this.transactionAmount = transactionAmount;
+    }
+
     public static PaymentEntity fromDomain(Payment payment){
+
         PaymentEntity entity = new PaymentEntity();
 
         entity.id = payment.getId();
