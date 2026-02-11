@@ -1,36 +1,61 @@
-# Payment Service API
+# Payment Service API 💳
 
-API de pagamento integrada ao Mercado Pago.
+API de pagamentos de alto desempenho desenvolvida com **Java 21** e **Spring Boot 3**, focada em escalabilidade e manutenibilidade através da **Clean Architecture**.
 
-## 🔹 Como funciona
+---
 
-- Endpoint: `/api/v1/payments/checkout`
-- Em **dev**, retorna um `init_point` fake:
-https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=MOCK
+## 🛠️ Tecnologias Utilizadas
 
+* **Java 21** & **Spring Boot 3**
+* **MySQL** (Persistência de dados)
+* **Docker** & **Docker Compose** (Containerização)
+* **OpenAPI/Swagger** (Documentação)
+* **Mercado Pago SDK/API** (Gateway de pagamento)
 
-- Em **prod**, usa o gateway real e precisa de token válido.
+---
+
+## 🏗️ Arquitetura (Clean Architecture)
+
+O projeto utiliza a separação de preocupações para isolar o domínio das tecnologias externas:
+
+* **Core (Domain & UseCases):** Contém as entidades de negócio puras e os casos de uso (regras), totalmente independentes de frameworks.
+* **Entrypoints:** Adaptadores de entrada via REST Controllers que orquestram a comunicação com o Core.
+* **Dataproviders:** Implementações de infraestrutura para persistência em banco de dados (MySQL/JPA) e integração com o Gateway do Mercado Pago.
+
+---
+
+## 🔹 Funcionalidades
+
+* **Checkout:** Geração dinâmica de links de pagamento (*init_point*) via Mercado Pago.
+* **Consulta:** Recuperação detalhada do status e dados da transação através de DTOs.
+* **Mock Mode:** Suporte a ambiente de desenvolvimento sem dependência de APIs externas reais.
+
+---
+
+## 🚀 Como Testar (Swagger)
+
+A documentação interativa permite realizar chamadas à API em tempo real:
+
+> **URL:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+---
 
 ## 🔹 Profiles Spring
 
-- `dev` → MockMercadoPagoClient
-- `prod` → MercadoPagoClient (token real necessário)
+O sistema utiliza perfis para alternar entre comportamentos de infraestrutura:
 
-## 🔹 Rodando localmente
+* **dev**: Ativa o `MockMercadoPagoClient`, retornando links de sandbox estáticos.
+* **prod**: Ativa o `MercadoPagoClient` real, integrando-se à API oficial.
+
+---
+
+## 🐳 Rodando com Docker
+
+A aplicação já conta com orquestração completa para subir o ambiente (App + Banco):
 
 ```bash
-# dev (mock)
-java -jar payment.jar --spring.profiles.active=dev
-```
-## 🔹 Rodando em produção
-```bash
-# prod (real)
-java -jar payment.jar --spring.profiles.active=prod
-```
+# 1. Gerar o pacote da aplicação
+mvn clean package -DskipTests
 
-🔹 Docker
-```bash
-docker-compose up
-```
-
-⚠️ Integração real depende de credenciais e habilitação da conta Mercado Pago.
+# 2. Subir os containers (MySQL e App)
+docker-compose up --build
