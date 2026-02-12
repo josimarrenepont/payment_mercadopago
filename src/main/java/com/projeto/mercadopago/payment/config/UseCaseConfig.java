@@ -3,7 +3,7 @@ package com.projeto.mercadopago.payment.config;
 import com.projeto.mercadopago.payment.core.dataprovider.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.usecase.CreateCheckoutUseCase;
 import com.projeto.mercadopago.payment.core.usecase.FindPaymentUseCase;
-import com.projeto.mercadopago.payment.gateway.MercadoPagoGateway;
+import com.projeto.mercadopago.payment.core.dataprovider.MercadoPagoGateway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

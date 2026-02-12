@@ -1,5 +1,6 @@
-package com.projeto.mercadopago.payment.gateway;
+package com.projeto.mercadopago.payment.dataprovider.http;
 
+import com.projeto.mercadopago.payment.core.dataprovider.MercadoPagoGateway;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

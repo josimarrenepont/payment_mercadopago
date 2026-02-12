@@ -1,4 +1,4 @@
-package com.projeto.mercadopago.payment.dto;
+package com.projeto.mercadopago.payment.entrypoint.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;

@@ -3,14 +3,12 @@ package com.projeto.mercadopago.payment.entrypoint.controller;
 import com.projeto.mercadopago.payment.core.domain.Payment;
 import com.projeto.mercadopago.payment.core.usecase.CreateCheckoutUseCase;
 import com.projeto.mercadopago.payment.core.usecase.FindPaymentUseCase;
-import com.projeto.mercadopago.payment.dto.PaymentRequestDTO;
-import com.projeto.mercadopago.payment.dto.PaymentStatusDTO;
+import com.projeto.mercadopago.payment.entrypoint.dto.PaymentRequestDTO;
+import com.projeto.mercadopago.payment.entrypoint.dto.PaymentStatusDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/payments")

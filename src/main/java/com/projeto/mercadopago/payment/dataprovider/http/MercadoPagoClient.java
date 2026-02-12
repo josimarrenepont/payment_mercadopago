@@ -1,6 +1,7 @@
-package com.projeto.mercadopago.payment.gateway;
+package com.projeto.mercadopago.payment.dataprovider.http;
 
 import com.projeto.mercadopago.payment.exception.IntegrationException;
+import com.projeto.mercadopago.payment.core.dataprovider.MercadoPagoGateway;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.*;
