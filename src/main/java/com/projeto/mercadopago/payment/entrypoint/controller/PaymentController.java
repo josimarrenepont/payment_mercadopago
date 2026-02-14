@@ -17,7 +17,8 @@ public class PaymentController {
     private final CreateCheckoutUseCase createCheckoutUseCase;
     private final FindPaymentUseCase findPaymentUseCase;
 
-    public PaymentController(CreateCheckoutUseCase createCheckoutUseCase, FindPaymentUseCase findPaymentUseCase) {
+    public PaymentController(CreateCheckoutUseCase createCheckoutUseCase,
+                             FindPaymentUseCase findPaymentUseCase) {
         this.createCheckoutUseCase = createCheckoutUseCase;
         this.findPaymentUseCase = findPaymentUseCase;
     }

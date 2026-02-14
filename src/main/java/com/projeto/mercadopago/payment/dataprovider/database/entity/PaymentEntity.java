@@ -52,4 +52,8 @@ public class PaymentEntity {
 
         return entity;
     }
+    public Payment toDomain(){
+        return new Payment(this.id,
+                this.status, this.transactionAmount);
+    }
 }

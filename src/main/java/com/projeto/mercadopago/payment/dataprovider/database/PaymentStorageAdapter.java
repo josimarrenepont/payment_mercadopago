@@ -27,10 +27,6 @@ public class PaymentStorageAdapter implements PaymentStoragePort {
     @Override
     public Optional<Payment> findById(Long id) {
         return repository.findById(id)
-                .map(entity -> new Payment(
-                        entity.getId(),
-                        entity.getStatus(),
-                        entity.getTransactionAmount()
-                ));
+                .map(PaymentEntity::toDomain);
     }
 }
