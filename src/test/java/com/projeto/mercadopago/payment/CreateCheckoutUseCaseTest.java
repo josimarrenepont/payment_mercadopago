@@ -38,4 +38,5 @@ public class CreateCheckoutUseCaseTest {
 
         verify(storagePort, times(1)).save(payment);
     }
+
 }
