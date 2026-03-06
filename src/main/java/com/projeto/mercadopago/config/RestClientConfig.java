@@ -1,4 +1,4 @@
-package com.projeto.mercadopago.payment.config;
+package com.projeto.mercadopago.config;
 
 import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

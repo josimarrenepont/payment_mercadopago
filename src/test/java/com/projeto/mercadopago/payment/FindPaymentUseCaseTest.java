@@ -3,14 +3,13 @@ package com.projeto.mercadopago.payment;
 import com.projeto.mercadopago.payment.core.dataprovider.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.domain.Payment;
 import com.projeto.mercadopago.payment.core.usecase.FindPaymentUseCase;
-import com.projeto.mercadopago.payment.exception.IntegrationException;
+import com.projeto.mercadopago.common.exception.IntegrationException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -33,7 +32,7 @@ public class FindPaymentUseCaseTest {
 
         Payment result = useCase.execute(1L);
 
-        assertEquals("SUCCESS", result.getStatus());
+        Assertions.assertEquals("SUCCESS", result.getStatus());
     }
     @Test
     void shouldThrowExceptionWhenPaymentNotFound(){

@@ -2,7 +2,7 @@ package com.projeto.mercadopago.payment.core.usecase;
 
 import com.projeto.mercadopago.payment.core.dataprovider.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.domain.Payment;
-import com.projeto.mercadopago.payment.exception.IntegrationException;
+import com.projeto.mercadopago.common.exception.IntegrationException;
 
 public class FindPaymentUseCase {
 

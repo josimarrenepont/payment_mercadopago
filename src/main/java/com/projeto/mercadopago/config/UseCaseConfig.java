@@ -1,4 +1,4 @@
-package com.projeto.mercadopago.payment.config;
+package com.projeto.mercadopago.config;
 
 import com.projeto.mercadopago.payment.core.dataprovider.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.usecase.CreateCheckoutUseCase;

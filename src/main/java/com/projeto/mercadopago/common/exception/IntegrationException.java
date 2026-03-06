@@ -1,4 +1,4 @@
-package com.projeto.mercadopago.payment.exception;
+package com.projeto.mercadopago.common.exception;
 
 public class IntegrationException extends RuntimeException{
 
