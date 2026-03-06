@@ -54,11 +54,11 @@ public class Order {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (!(object instanceof Order order)) return false;
-        return Objects.equals(getId(), order.getId()) && Objects.equals(getMoment(), order.getMoment()) && Objects.equals(getTransactionId(), order.getTransactionId()) && Objects.equals(getDescription(), order.getDescription()) && Objects.equals(getTotal(), order.getTotal());
+        return Objects.equals(getId(), order.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getMoment(), getTransactionId(), getDescription(), getTotal());
+        return Objects.hashCode(getId());
     }
 }
