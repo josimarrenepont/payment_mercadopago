@@ -2,8 +2,11 @@ package com.projeto.mercadopago.order.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class Order {
 
@@ -13,16 +16,28 @@ public class Order {
     private final Instant moment;
     private String transactionId;
     private String description;
-    private Double total;
 
-    public Order(Long id, Instant moment, String transactionId, String description, Double total) {
+    private OrderStatus status;
+    private final Set<OrderItem> items = new HashSet<>();
+
+    public Order(Long id, Instant moment, String transactionId, String description, OrderStatus status) {
         this.id = id;
         this.moment = moment;
         this.transactionId = transactionId;
         this.description = description;
-        this.total = total;
+        this.status = status;
     }
 
+    public void pay(String transactionId){
+        this.transactionId = transactionId;
+        this.status = OrderStatus.PAID;
+    }
+
+    public BigDecimal getTotal(){
+        return items.stream()
+                .map(OrderItem::getSubTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
     public Long getId() {
         return id;
     }
@@ -39,15 +54,16 @@ public class Order {
         return description;
     }
 
-    public Double getTotal() {
-        return total;
+    public OrderStatus getStatus() {
+        return status;
     }
 
-    public void updateTransactional(String transactionId){
-        this.transactionId = transactionId;
+    public void addItem(OrderItem item){
+        this.items.add(item);
     }
-    public void adjustTotal(Double newTotal){
-        this.total = newTotal;
+
+    public Set<OrderItem> getItems(){
+        return java.util.Collections.unmodifiableSet(items);
     }
 
     @Override

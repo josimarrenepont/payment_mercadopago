@@ -1,4 +1,4 @@
-package com.projeto.mercadopago.config;
+package com.projeto.mercadopago.payment.infrastructure.config;
 
 import com.projeto.mercadopago.payment.core.dataprovider.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.usecase.CreateCheckoutUseCase;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class UseCaseConfig {
+public class PaymentUseCaseConfig {
 
     @Bean
     public CreateCheckoutUseCase

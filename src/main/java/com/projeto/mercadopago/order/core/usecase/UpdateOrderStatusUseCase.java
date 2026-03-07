@@ -1,0 +1,22 @@
+package com.projeto.mercadopago.order.core.usecase;
+
+import com.projeto.mercadopago.order.core.dataprovider.OrderStoragePort;
+import com.projeto.mercadopago.order.core.domain.Order;
+import org.apache.velocity.exception.ResourceNotFoundException;
+
+public class UpdateOrderStatusUseCase {
+
+    private final OrderStoragePort storagePort;
+
+    public UpdateOrderStatusUseCase(OrderStoragePort storagePort) {
+        this.storagePort = storagePort;
+    }
+    public void execute(Long orderId, String transactionId){
+        Order order = storagePort.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        order.pay(transactionId);
+
+        storagePort.save(order);
+    }
+}
