@@ -12,7 +12,6 @@ public class Order {
 
     private final Long id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private final Instant moment;
     private String transactionId;
     private String description;

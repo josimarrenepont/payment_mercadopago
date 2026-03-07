@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@Profile({"prod", "dev", "test"})
+@Profile("dev")
 public class MercadoPagoClient implements MercadoPagoGateway {
 
     private static final String PREFERENCES_URL =
