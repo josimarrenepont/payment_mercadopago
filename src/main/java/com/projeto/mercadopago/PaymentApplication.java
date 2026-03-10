@@ -1,4 +1,4 @@
-package com.projeto.mercadopago.payment;
+package com.projeto.mercadopago;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

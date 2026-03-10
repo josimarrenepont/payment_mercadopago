@@ -13,21 +13,24 @@ public class OrderItemEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long productId;
     private BigDecimal price;
     private Integer quantity;
 
     public OrderItemEntity() {
     }
 
-    public OrderItemEntity(Long id, BigDecimal price, Integer quantity) {
+    public OrderItemEntity(Long id, Long productId, BigDecimal price, Integer quantity) {
         this.id = id;
         this.price = price;
         this.quantity = quantity;
+        this.productId = productId;
     }
 
     public static OrderItemEntity fromDomain(OrderItem item){
         OrderItemEntity itemEntity = new OrderItemEntity();
         itemEntity.id = item.getId();
+        itemEntity.productId = item.getProductId();
         itemEntity.price = item.getPrice();
         itemEntity.quantity = item.getQuantity();
 
@@ -37,6 +40,7 @@ public class OrderItemEntity {
     public OrderItem toDomain(){
         return new OrderItem(
                 this.id,
+                this.productId,
                 this.price,
                 this.quantity
         );

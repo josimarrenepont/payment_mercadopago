@@ -5,6 +5,7 @@ import com.projeto.mercadopago.order.core.domain.OrderStatus;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public class OrderEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
-    private Set<OrderItemEntity> items;
+    private Set<OrderItemEntity> items = new HashSet<>();
 
     public static OrderEntity fromDomain(Order order){
         OrderEntity entity = new OrderEntity();

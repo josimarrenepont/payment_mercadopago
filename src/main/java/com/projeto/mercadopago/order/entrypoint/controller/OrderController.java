@@ -8,7 +8,10 @@ import com.projeto.mercadopago.order.core.usecase.FindOrderUseCase;
 import com.projeto.mercadopago.order.core.usecase.UpdateOrderStatusUseCase;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderRequestDTO;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderResponseDTO;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,11 @@ public class OrderController {
     }
 
     @PostMapping
+    @Operation(summary = "Create checkout", description = "Creates a checkout session for a order.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Checkout created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
     public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO requestDTO){
         Order order = new Order(
                 null,
@@ -40,6 +48,7 @@ public class OrderController {
 
         requestDTO.items().forEach(item ->
                 order.addItem(new OrderItem(
+                        null,
                         item.productId(),
                         item.price(),
                         item.quantity())));
@@ -48,7 +57,13 @@ public class OrderController {
 
         return ResponseEntity.ok(OrderResponseDTO.fromDomain(savedOrder));
     }
+
     @GetMapping("/{id}")
+    @Operation(summary = "Search Order for ID", description = "Returns the orders details based on the provided ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order successfully found"),
+            @ApiResponse(responseCode = "404", description = "Order not found")
+    })
     public ResponseEntity<OrderResponseDTO> findById(@PathVariable Long id){
         Order order = findOrderUseCase.execute(id);
 

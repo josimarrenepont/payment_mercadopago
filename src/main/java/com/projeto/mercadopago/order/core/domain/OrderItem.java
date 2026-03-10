@@ -5,11 +5,13 @@ import java.util.Objects;
 
 public class OrderItem {
     private final Long id;
+    private final Long productId;
     private BigDecimal price;
     private Integer quantity;
 
-    public OrderItem(Long id, BigDecimal price, Integer quantity) {
+    public OrderItem(Long id, Long productId, BigDecimal price, Integer quantity) {
         this.id = id;
+        this.productId = productId;
         this.price = price;
         this.quantity = quantity;
     }
@@ -20,6 +22,9 @@ public class OrderItem {
 
     public Long getId() {
         return id;
+    }
+    public Long getProductId() {
+        return productId;
     }
 
     public BigDecimal getPrice() {
@@ -48,4 +53,5 @@ public class OrderItem {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
+
 }
