@@ -69,4 +69,21 @@ public class OrderController {
 
         return ResponseEntity.ok(OrderResponseDTO.fromDomain(order));
     }
+
+    @Operation(
+            summary = "Webhook for payment notification",
+            description = "Endpoint that Mercado Pago calls to notify that the payment status has changed."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Notification processed successfully"),
+            @ApiResponse(responseCode = "404", description = "Order not found in the system"),
+            @ApiResponse(responseCode = "400", description = "Invalid notification parameters")
+    })
+    @PostMapping("/{id}/payment-notification")
+    public ResponseEntity<Void> handleNotification(@PathVariable Long id,
+                                                   @RequestParam (name = "data_id") String dataId){
+        updateOrderStatusUseCase.execute(id, dataId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
