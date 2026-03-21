@@ -1,5 +1,6 @@
 package com.projeto.mercadopago.payment.dataprovider.database;
 
+import com.projeto.mercadopago.payment.core.dataprovider.MercadoPagoGateway;
 import com.projeto.mercadopago.payment.core.domain.Payment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,8 @@ import java.util.Optional;
 @ActiveProfiles("test")
 public class PaymentStorageAdapterTest {
 
+    private MercadoPagoGateway mercadoPagoGateway;
+
     @Autowired
     private PaymentStorageAdapter storageAdapter;
 
@@ -27,4 +30,5 @@ public class PaymentStorageAdapterTest {
         Assertions.assertTrue(result.isPresent());
         Assertions.assertEquals("TEST", result.get().getStatus());
     }
+
 }

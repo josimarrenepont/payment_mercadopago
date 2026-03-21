@@ -4,6 +4,7 @@ import com.projeto.mercadopago.order.core.domain.Order;
 import com.projeto.mercadopago.order.core.domain.OrderStatus;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +20,7 @@ public class OrderEntity {
     private Instant moment;
     private String transactionId;
     private String description;
+    private java.math.BigDecimal total;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -34,6 +36,7 @@ public class OrderEntity {
         entity.transactionId = order.getTransactionId();
         entity.description = order.getDescription();
         entity.status = order.getStatus();
+        entity.total = order.getTotal();
 
         entity.items = order.getItems().stream().
                 map(OrderItemEntity::fromDomain).collect(Collectors.toSet());

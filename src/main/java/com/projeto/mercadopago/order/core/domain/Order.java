@@ -19,20 +19,39 @@ public class Order {
     private OrderStatus status;
     private final Set<OrderItem> items = new HashSet<>();
 
+    private BigDecimal total;
+
     public Order(Long id, Instant moment, String transactionId, String description, OrderStatus status) {
         this.id = id;
         this.moment = moment;
         this.transactionId = transactionId;
         this.description = description;
         this.status = status;
+        this.total = BigDecimal.ZERO;
     }
 
     public void pay(String transactionId){
+        if(this.status != OrderStatus.PENDING){
+            throw new IllegalArgumentException("Order cannot be paid in current status: " + this.status);
+        }
+        if(transactionId == null || transactionId.isBlank()){
+            throw new IllegalArgumentException("Invalid trasanction ID");
+        }
         this.transactionId = transactionId;
         this.status = OrderStatus.PAID;
     }
 
-    public BigDecimal getTotal(){
+    public void addItem(OrderItem item){
+        if(status != OrderStatus.PENDING){
+            throw new IllegalArgumentException("It is not possible to change items of an order that is not pending");
+        }
+
+        this.items.add(item);
+        this.total = calculateTotal();
+    }
+
+
+    public BigDecimal calculateTotal(){
         return items.stream()
                 .map(OrderItem::getSubTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -57,8 +76,8 @@ public class Order {
         return status;
     }
 
-    public void addItem(OrderItem item){
-        this.items.add(item);
+    public BigDecimal getTotal() {
+        return total;
     }
 
     public Set<OrderItem> getItems(){
