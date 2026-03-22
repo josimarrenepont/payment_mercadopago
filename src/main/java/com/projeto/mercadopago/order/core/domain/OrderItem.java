@@ -36,12 +36,21 @@ public class OrderItem {
     }
 
     public void adjustPrice(BigDecimal newPrice){
+        if(newPrice == null || newPrice.compareTo(BigDecimal.ZERO) < 0 ){
+            throw new IllegalArgumentException("Price cannot be null or negative");
+        }
         this.price = newPrice;
     }
     public void adjustQuantity(Integer newQauntity){
+        if(newQauntity == null || newQauntity < 0){
+            throw new IllegalArgumentException("Quantity cannot be null or negative");
+        }
         this.quantity = newQauntity;
     }
 
+    public void addQuantity(Integer quantityToAdd) {
+        this.quantity += quantityToAdd;
+    }
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -53,5 +62,6 @@ public class OrderItem {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
+
 
 }

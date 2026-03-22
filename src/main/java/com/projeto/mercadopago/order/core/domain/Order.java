@@ -46,7 +46,13 @@ public class Order {
             throw new IllegalArgumentException("It is not possible to change items of an order that is not pending");
         }
 
-        this.items.add(item);
+        items.stream()
+                        .filter(i -> i.getProductId().equals(item.getProductId()))
+                .findFirst()
+                .ifPresentOrElse(
+                        existingItem -> existingItem.addQuantity(item.getQuantity()),
+                        () -> this.items.add(item)
+                );
         this.total = calculateTotal();
     }
 
