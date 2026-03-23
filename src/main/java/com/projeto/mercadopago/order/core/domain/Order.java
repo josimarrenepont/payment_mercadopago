@@ -1,7 +1,5 @@
 package com.projeto.mercadopago.order.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
