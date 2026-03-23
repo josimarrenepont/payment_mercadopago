@@ -9,6 +9,7 @@ public class OrderItem {
     private BigDecimal price;
     private Integer quantity;
 
+
     public OrderItem(Long id, Long productId, BigDecimal price, Integer quantity) {
         this.id = id;
         this.productId = productId;

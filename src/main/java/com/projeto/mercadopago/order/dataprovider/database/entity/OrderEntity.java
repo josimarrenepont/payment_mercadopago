@@ -20,7 +20,9 @@ public class OrderEntity {
     private Instant moment;
     private String transactionId;
     private String description;
-    private java.math.BigDecimal total;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal total;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -28,6 +30,9 @@ public class OrderEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
     private Set<OrderItemEntity> items = new HashSet<>();
+
+    public OrderEntity() {
+    }
 
     public static OrderEntity fromDomain(Order order){
         OrderEntity entity = new OrderEntity();
@@ -53,7 +58,9 @@ public class OrderEntity {
                 );
 
         if(this.items != null){
-            this.items.forEach(itemEntity -> order.addItem(itemEntity.toDomain()));
+            this.items.forEach(itemEntity -> {
+                order.addItem(itemEntity.toDomain());
+            });
         }
 
         return order;

@@ -14,7 +14,10 @@ public class OrderItemEntity {
     private Long id;
 
     private Long productId;
+
+    @Column(precision = 19, scale = 2)
     private BigDecimal price;
+
     private Integer quantity;
 
     public OrderItemEntity() {
