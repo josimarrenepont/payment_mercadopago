@@ -9,6 +9,8 @@ import com.projeto.mercadopago.order.core.usecase.UpdateOrderStatusUseCase;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderRequestDTO;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,6 +22,9 @@ import java.time.Instant;
 @RestController
 @RequestMapping("/api/v1/orders")
 public class OrderController {
+
+    private final static Logger log = (Logger) LoggerFactory.getLogger(OrderController.class);
+
     private final CreateOrderUseCase createOrderUseCase;
     private final FindOrderUseCase findOrderUseCase;
     private final UpdateOrderStatusUseCase updateOrderStatusUseCase;
@@ -82,8 +87,15 @@ public class OrderController {
     @PostMapping("/{id}/payment-notification")
     public ResponseEntity<Void> handleNotification(@PathVariable Long id,
                                                    @RequestParam (name = "data_id") String dataId){
-        updateOrderStatusUseCase.execute(id, dataId);
+        log.info("Receiving payment notification for order ID: {} with Data ID: {}", id, dataId);
 
-        return ResponseEntity.noContent().build();
+        try {
+            updateOrderStatusUseCase.execute(id, dataId);
+            log.info("Order status updated successfully for order: {}", id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e){
+            log.error("Error processing notification for order {}: {}", id, e.getMessage());
+            throw e;
+        }
     }
 }

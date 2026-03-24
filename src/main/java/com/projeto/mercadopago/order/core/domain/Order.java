@@ -54,7 +54,6 @@ public class Order {
         this.total = calculateTotal();
     }
 
-
     public BigDecimal calculateTotal(){
         return items.stream()
                 .map(OrderItem::getSubTotal)

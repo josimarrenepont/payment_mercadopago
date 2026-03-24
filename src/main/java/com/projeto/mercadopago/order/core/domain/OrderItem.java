@@ -10,7 +10,7 @@ public class OrderItem {
     private Integer quantity;
 
 
-    public OrderItem(Long id, Long productId, BigDecimal price, Integer quantity) {
+        public OrderItem(Long id, Long productId, BigDecimal price, Integer quantity) {
         this.id = id;
         this.productId = productId;
         this.price = price;
@@ -42,11 +42,11 @@ public class OrderItem {
         }
         this.price = newPrice;
     }
-    public void adjustQuantity(Integer newQauntity){
-        if(newQauntity == null || newQauntity < 0){
+    public void adjustQuantity(Integer newQuantity){
+        if(newQuantity == null || newQuantity < 0){
             throw new IllegalArgumentException("Quantity cannot be null or negative");
         }
-        this.quantity = newQauntity;
+        this.quantity = newQuantity;
     }
 
     public void addQuantity(Integer quantityToAdd) {
