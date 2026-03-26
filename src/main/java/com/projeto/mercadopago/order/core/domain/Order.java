@@ -39,6 +39,11 @@ public class Order {
         this.status = OrderStatus.PAID;
     }
 
+    public void loadItem(OrderItem item){
+        this.items.add(item);
+        this.total = calculateTotal();
+    }
+
     public void addItem(OrderItem item){
         if(status != OrderStatus.PENDING){
             throw new IllegalArgumentException("It is not possible to change items of an order that is not pending");
@@ -59,6 +64,7 @@ public class Order {
                 .map(OrderItem::getSubTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
     public Long getId() {
         return id;
     }

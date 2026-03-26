@@ -59,7 +59,7 @@ public class OrderEntity {
 
         if(this.items != null){
             this.items.forEach(itemEntity -> {
-                order.addItem(itemEntity.toDomain());
+                order.loadItem(itemEntity.toDomain());
             });
         }
 
