@@ -1,6 +1,6 @@
 package com.projeto.mercadopago.payment;
 
-import com.projeto.mercadopago.payment.core.dataprovider.PaymentStoragePort;
+import com.projeto.mercadopago.payment.core.port.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.domain.Payment;
 import com.projeto.mercadopago.payment.core.usecase.FindPaymentUseCase;
 import com.projeto.mercadopago.common.exception.IntegrationException;

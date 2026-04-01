@@ -1,8 +1,8 @@
 package com.projeto.mercadopago.payment.core.usecase;
 
-import com.projeto.mercadopago.payment.core.dataprovider.PaymentStoragePort;
+import com.projeto.mercadopago.payment.core.port.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.domain.Payment;
-import com.projeto.mercadopago.payment.core.dataprovider.MercadoPagoGateway;
+import com.projeto.mercadopago.payment.core.port.MercadoPagoGateway;
 
 public class CreateCheckoutUseCase {
 

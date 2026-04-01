@@ -1,7 +1,7 @@
 package com.projeto.mercadopago.payment;
 
-import com.projeto.mercadopago.payment.core.dataprovider.MercadoPagoGateway;
-import com.projeto.mercadopago.payment.core.dataprovider.PaymentStoragePort;
+import com.projeto.mercadopago.payment.core.port.MercadoPagoGateway;
+import com.projeto.mercadopago.payment.core.port.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.domain.Payment;
 import com.projeto.mercadopago.payment.core.usecase.CreateCheckoutUseCase;
 import org.junit.jupiter.api.BeforeEach;

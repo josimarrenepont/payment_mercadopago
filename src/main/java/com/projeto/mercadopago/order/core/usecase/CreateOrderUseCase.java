@@ -1,6 +1,6 @@
 package com.projeto.mercadopago.order.core.usecase;
 
-import com.projeto.mercadopago.order.core.dataprovider.OrderStoragePort;
+import com.projeto.mercadopago.order.core.port.OrderStoragePort;
 import com.projeto.mercadopago.order.core.domain.Order;
 
 public class CreateOrderUseCase {
