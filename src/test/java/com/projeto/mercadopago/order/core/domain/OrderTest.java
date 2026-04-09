@@ -1,7 +1,7 @@
 package com.projeto.mercadopago.order.core.domain;
 
-import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -64,6 +64,15 @@ public class OrderTest {
         {
            order.pay("Second-id");
         });
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when trying to pay with an invalid transactionId")
+    void shouldThrowExceptionWhenTransactionIdIsInvalid(){
+        Order order = createPendingOrder();
+
+        assertThrows(IllegalArgumentException.class, () -> order.pay(null));
+        assertThrows(IllegalArgumentException.class, () -> order.pay(""));
     }
 
 }
