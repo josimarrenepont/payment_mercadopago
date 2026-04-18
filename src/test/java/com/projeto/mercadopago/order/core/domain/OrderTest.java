@@ -1,5 +1,7 @@
 package com.projeto.mercadopago.order.core.domain;
 
+import com.projeto.mercadopago.order.core.domain.exception.InvalidOrderOperationException;
+import com.projeto.mercadopago.order.core.domain.exception.OrderAlreadyPaidException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +41,7 @@ public class OrderTest {
 
         OrderItem orderItem = new OrderItem(1L, 100L, BigDecimal.TEN, 2);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(InvalidOrderOperationException.class, () -> {
             order.addItem(orderItem);
         });
     }
@@ -60,7 +62,7 @@ public class OrderTest {
         Order order = createPendingOrder();
         order.pay("First-id");
 
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(OrderAlreadyPaidException.class, () ->
         {
            order.pay("Second-id");
         });
@@ -71,8 +73,8 @@ public class OrderTest {
     void shouldThrowExceptionWhenTransactionIdIsInvalid(){
         Order order = createPendingOrder();
 
-        assertThrows(IllegalArgumentException.class, () -> order.pay(null));
-        assertThrows(IllegalArgumentException.class, () -> order.pay(""));
+        assertThrows(InvalidOrderOperationException.class, () -> order.pay(null));
+        assertThrows(InvalidOrderOperationException.class, () -> order.pay(""));
     }
 
 }

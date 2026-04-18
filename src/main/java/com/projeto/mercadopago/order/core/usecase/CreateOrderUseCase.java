@@ -1,5 +1,6 @@
 package com.projeto.mercadopago.order.core.usecase;
 
+import com.projeto.mercadopago.order.core.domain.exception.InvalidOrderOperationException;
 import com.projeto.mercadopago.order.core.port.OrderStoragePort;
 import com.projeto.mercadopago.order.core.domain.Order;
 
@@ -12,7 +13,7 @@ public class CreateOrderUseCase {
 
     public Order execute(Order order){
         if(order.getItems().isEmpty()){
-            throw new IllegalArgumentException("Cannot create an order without itemss");
+            throw new InvalidOrderOperationException("Cannot create an order without items");
         }
 
         return storagePort.save(order);

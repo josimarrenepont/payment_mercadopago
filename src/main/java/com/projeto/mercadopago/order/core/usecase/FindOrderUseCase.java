@@ -1,8 +1,8 @@
 package com.projeto.mercadopago.order.core.usecase;
 
+import com.projeto.mercadopago.order.core.domain.exception.OrderNotFoundException;
 import com.projeto.mercadopago.order.core.port.OrderStoragePort;
 import com.projeto.mercadopago.order.core.domain.Order;
-import org.apache.velocity.exception.ResourceNotFoundException;
 
 public class FindOrderUseCase {
 
@@ -16,6 +16,6 @@ public class FindOrderUseCase {
             throw new IllegalArgumentException("Order ID cannot be null");
         }
         return storagePort.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+                .orElseThrow(() -> new OrderNotFoundException("Order with ID " + id + " not found"));
     }
 }

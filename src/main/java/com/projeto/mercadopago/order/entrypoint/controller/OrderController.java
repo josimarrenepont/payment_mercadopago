@@ -1,7 +1,6 @@
 package com.projeto.mercadopago.order.entrypoint.controller;
 
 import com.projeto.mercadopago.order.core.domain.Order;
-import com.projeto.mercadopago.order.core.domain.OrderItem;
 import com.projeto.mercadopago.order.core.domain.OrderStatus;
 import com.projeto.mercadopago.order.core.usecase.CreateOrderUseCase;
 import com.projeto.mercadopago.order.core.usecase.FindOrderUseCase;
@@ -23,7 +22,7 @@ import java.time.Instant;
 @RequestMapping("/api/v1/orders")
 public class OrderController {
 
-    private final static Logger log = (Logger) LoggerFactory.getLogger(OrderController.class);
+    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
 
     private final CreateOrderUseCase createOrderUseCase;
     private final FindOrderUseCase findOrderUseCase;
@@ -42,7 +41,7 @@ public class OrderController {
             @ApiResponse(responseCode = "201", description = "Checkout created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
-    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO requestDTO){
+    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO requestDTO) {
         Order order = new Order(
                 null,
                 Instant.now(),
@@ -51,12 +50,7 @@ public class OrderController {
                 OrderStatus.PENDING
         );
 
-        requestDTO.items().forEach(item ->
-                order.addItem(new OrderItem(
-                        null,
-                        item.productId(),
-                        item.price(),
-                        item.quantity())));
+        order.addItemsFromRequest(requestDTO.items());
 
         Order savedOrder = createOrderUseCase.execute(order);
 
@@ -69,7 +63,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "Order successfully found"),
             @ApiResponse(responseCode = "404", description = "Order not found")
     })
-    public ResponseEntity<OrderResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<OrderResponseDTO> findById(@PathVariable Long id) {
         Order order = findOrderUseCase.execute(id);
 
         return ResponseEntity.ok(OrderResponseDTO.fromDomain(order));
@@ -86,16 +80,13 @@ public class OrderController {
     })
     @PostMapping("/{id}/payment-notification")
     public ResponseEntity<Void> handleNotification(@PathVariable Long id,
-                                                   @RequestParam (name = "data_id") String dataId){
+                                                   @RequestParam(name = "data_id") String dataId) {
         log.info("Receiving payment notification for order ID: {} with Data ID: {}", id, dataId);
 
-        try {
-            updateOrderStatusUseCase.execute(id, dataId);
-            log.info("Order status updated successfully for order: {}", id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e){
-            log.error("Error processing notification for order {}: {}", id, e.getMessage());
-            throw e;
-        }
+        updateOrderStatusUseCase.execute(id, dataId);
+
+        log.info("Order status updated successfully for order: {}", id);
+        return ResponseEntity.noContent().build();
+
     }
 }

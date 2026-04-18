@@ -1,8 +1,13 @@
 package com.projeto.mercadopago.order.core.domain;
 
+import com.projeto.mercadopago.order.core.domain.exception.InvalidOrderOperationException;
+import com.projeto.mercadopago.order.core.domain.exception.OrderAlreadyPaidException;
+import com.projeto.mercadopago.order.entrypoint.dto.OrderItemRequestDTO;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,10 +35,10 @@ public class Order {
 
     public void pay(String transactionId){
         if(this.status != OrderStatus.PENDING){
-            throw new IllegalArgumentException("Order cannot be paid in current status: " + this.status);
+            throw new OrderAlreadyPaidException("Order cannot be paid in current status: " + this.status);
         }
         if(transactionId == null || transactionId.isBlank()){
-            throw new IllegalArgumentException("Invalid trasanction ID");
+            throw new InvalidOrderOperationException("Transaction ID provided by Mercado Pago is invalid or empty.");
         }
         this.transactionId = transactionId;
         this.status = OrderStatus.PAID;
@@ -46,7 +51,7 @@ public class Order {
 
     public void addItem(OrderItem item){
         if(status != OrderStatus.PENDING){
-            throw new IllegalArgumentException("It is not possible to change items of an order that is not pending");
+            throw new InvalidOrderOperationException("It is not possible to change items of an order that is not pending");
         }
 
         items.stream()
@@ -57,6 +62,10 @@ public class Order {
                         () -> this.items.add(item)
                 );
         this.total = calculateTotal();
+    }
+
+    public void addItemsFromRequest(List<OrderItemRequestDTO> itemsDto){
+        itemsDto.forEach(dto -> this.addItem(new OrderItem(null, dto.productId(), dto.price(), dto.quantity())));
     }
 
     public BigDecimal calculateTotal(){
