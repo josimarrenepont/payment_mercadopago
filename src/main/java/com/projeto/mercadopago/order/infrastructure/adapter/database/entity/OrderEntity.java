@@ -24,6 +24,9 @@ public class OrderEntity {
     @Column(precision = 19, scale = 2)
     private BigDecimal total;
 
+    @Column(precision = 19, scale = 2)
+    private BigDecimal discountAmount;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -42,6 +45,8 @@ public class OrderEntity {
         entity.description = order.getDescription();
         entity.status = order.getStatus();
         entity.total = order.getTotal();
+        entity.discountAmount = order.getDiscountAmount();
+
 
         entity.items = order.getItems().stream().
                 map(OrderItemEntity::fromDomain).collect(Collectors.toSet());

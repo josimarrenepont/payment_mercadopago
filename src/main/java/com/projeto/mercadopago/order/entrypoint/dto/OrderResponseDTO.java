@@ -12,6 +12,7 @@ public record OrderResponseDTO(
         Instant moment,
         String description,
         BigDecimal total,
+        BigDecimal discountAmount,
         OrderStatus status,
         String transactionId
 ) {
@@ -21,6 +22,7 @@ public record OrderResponseDTO(
                 order.getMoment(),
                 order.getDescription(),
                 order.getTotal(),
+                order.getDiscountAmount(),
                 order.getStatus(),
                 order.getTransactionId()
         );

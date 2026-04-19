@@ -52,7 +52,7 @@ public class OrderController {
 
         order.addItemsFromRequest(requestDTO.items());
 
-        Order savedOrder = createOrderUseCase.execute(order);
+        Order savedOrder = createOrderUseCase.execute(order, requestDTO.couponCode());
 
         return ResponseEntity.ok(OrderResponseDTO.fromDomain(savedOrder));
     }

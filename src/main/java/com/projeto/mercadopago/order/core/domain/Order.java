@@ -23,6 +23,7 @@ public class Order {
     private final Set<OrderItem> items = new HashSet<>();
 
     private BigDecimal total;
+    private BigDecimal discountAmount = BigDecimal.ZERO;
 
     public Order(Long id, Instant moment, String transactionId, String description, OrderStatus status) {
         this.id = id;
@@ -61,17 +62,35 @@ public class Order {
                         existingItem -> existingItem.addQuantity(item.getQuantity()),
                         () -> this.items.add(item)
                 );
-        this.total = calculateTotal();
+        this.total = calculateTotal().subtract(this.discountAmount);
     }
 
     public void addItemsFromRequest(List<OrderItemRequestDTO> itemsDto){
         itemsDto.forEach(dto -> this.addItem(new OrderItem(null, dto.productId(), dto.price(), dto.quantity())));
     }
 
+    public void applyDiscount(BigDecimal discountPercentage){
+        if(discountPercentage == null || discountPercentage.compareTo(BigDecimal.ZERO) <= 0){
+            throw new InvalidOrderOperationException("Invalid discount value");
+        }
+        if(discountPercentage.compareTo(new BigDecimal("0.80")) > 0){
+            throw new InvalidOrderOperationException("Discount exceeds maximum limit");
+        }
+
+
+        this.discountAmount = calculateTotal().multiply(discountPercentage);
+        this.total = calculateTotal().subtract(this.discountAmount);
+
+    }
+
     public BigDecimal calculateTotal(){
         return items.stream()
                 .map(OrderItem::getSubTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal getTotalWithDiscount(){
+        return calculateTotal().subtract(this.discountAmount);
     }
 
     public Long getId() {
@@ -96,6 +115,10 @@ public class Order {
 
     public BigDecimal getTotal() {
         return total;
+    }
+
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
     }
 
     public Set<OrderItem> getItems(){

@@ -1,5 +1,6 @@
     package com.projeto.mercadopago.order.config;
 
+    import com.projeto.mercadopago.order.core.port.CouponStoragePort;
     import com.projeto.mercadopago.order.core.port.OrderStoragePort;
     import com.projeto.mercadopago.order.core.usecase.CreateOrderUseCase;
     import com.projeto.mercadopago.order.core.usecase.FindOrderUseCase;
@@ -11,8 +12,8 @@
     public class OrderUseCaseConfig {
 
         @Bean
-        CreateOrderUseCase createOrderUseCase(OrderStoragePort storagePort){
-            return new CreateOrderUseCase(storagePort);
+        CreateOrderUseCase createOrderUseCase(OrderStoragePort storagePort, CouponStoragePort couponStoragePort){
+            return new CreateOrderUseCase(storagePort, couponStoragePort);
         }
         @Bean
         FindOrderUseCase findOrderUseCase(OrderStoragePort storagePort){

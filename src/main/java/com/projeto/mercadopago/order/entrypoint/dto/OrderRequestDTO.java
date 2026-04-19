@@ -4,5 +4,6 @@ import java.util.List;
 
 public record OrderRequestDTO(
         String description,
+        String couponCode,
         List<OrderItemRequestDTO> items
 ) {}
