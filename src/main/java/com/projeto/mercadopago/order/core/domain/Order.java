@@ -56,7 +56,7 @@ public class Order {
         }
 
         items.stream()
-                        .filter(i -> i.getProductId().equals(item.getProductId()))
+                .filter(i -> i.getProductId().equals(item.getProductId()))
                 .findFirst()
                 .ifPresentOrElse(
                         existingItem -> existingItem.addQuantity(item.getQuantity()),
@@ -76,8 +76,7 @@ public class Order {
         if(discountPercentage.compareTo(new BigDecimal("0.80")) > 0){
             throw new InvalidOrderOperationException("Discount exceeds maximum limit");
         }
-
-
+        
         this.discountAmount = calculateTotal().multiply(discountPercentage);
         this.total = calculateTotal().subtract(this.discountAmount);
 
@@ -87,10 +86,6 @@ public class Order {
         return items.stream()
                 .map(OrderItem::getSubTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public BigDecimal getTotalWithDiscount(){
-        return calculateTotal().subtract(this.discountAmount);
     }
 
     public Long getId() {
