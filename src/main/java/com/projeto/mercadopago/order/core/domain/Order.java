@@ -25,6 +25,14 @@ public class Order {
     private BigDecimal total;
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
+    public Order(String description){
+        this.id = null;
+        this.moment = Instant.now();
+        this.status = OrderStatus.PENDING;
+        this.description = description;
+        this.total = BigDecimal.ZERO;
+    }
+
     public Order(Long id, Instant moment, String transactionId, String description, OrderStatus status) {
         this.id = id;
         this.moment = moment;
@@ -76,7 +84,7 @@ public class Order {
         if(discountPercentage.compareTo(new BigDecimal("0.80")) > 0){
             throw new InvalidOrderOperationException("Discount exceeds maximum limit");
         }
-        
+
         this.discountAmount = calculateTotal().multiply(discountPercentage);
         this.total = calculateTotal().subtract(this.discountAmount);
 

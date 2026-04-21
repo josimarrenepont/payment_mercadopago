@@ -1,7 +1,6 @@
 package com.projeto.mercadopago.order.entrypoint.controller;
 
 import com.projeto.mercadopago.order.core.domain.Order;
-import com.projeto.mercadopago.order.core.domain.OrderStatus;
 import com.projeto.mercadopago.order.core.usecase.CreateOrderUseCase;
 import com.projeto.mercadopago.order.core.usecase.FindOrderUseCase;
 import com.projeto.mercadopago.order.core.usecase.UpdateOrderStatusUseCase;
@@ -42,13 +41,8 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
     public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO requestDTO) {
-        Order order = new Order(
-                null,
-                Instant.now(),
-                null,
-                requestDTO.description(),
-                OrderStatus.PENDING
-        );
+
+        Order order = new Order(requestDTO.description());
 
         order.addItemsFromRequest(requestDTO.items());
 
