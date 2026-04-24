@@ -90,6 +90,11 @@ public class Order {
 
     }
 
+    public void setDiscountAmountFromDatabase(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+        this.total = calculateTotal().subtract(discountAmount);
+    }
+
     public BigDecimal calculateTotal(){
         return items.stream()
                 .map(OrderItem::getSubTotal)

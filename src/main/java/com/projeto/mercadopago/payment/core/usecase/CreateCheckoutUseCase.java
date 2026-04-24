@@ -15,7 +15,9 @@ public class CreateCheckoutUseCase {
     }
 
     public String execute(Payment payment) {
-        String initPoint = gateway.createCheckoutPreference();
+        String description = "Order Payment #" + payment.getId();
+        String initPoint = gateway.createCheckoutPreference(payment.getTransactionAmount(), description);
+
         storagePort.save(payment);
         return initPoint;
     }

@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class MercadoPagoClient implements MercadoPagoGateway {
     }
 
     @Override
-    public String createCheckoutPreference() {
+    public String createCheckoutPreference(BigDecimal amount, String description) {
         try {
             return Retry.decorateSupplier(mercadoPagoRetry, () -> {
 
@@ -38,7 +39,7 @@ public class MercadoPagoClient implements MercadoPagoGateway {
                 headers.setBearerAuth(accessToken);
                 headers.setContentType(MediaType.APPLICATION_JSON);
 
-                Map<String, Object> payload = createPayload();
+                Map<String, Object> payload = createPayload(amount, description);
 
                 HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
 
@@ -64,11 +65,11 @@ public class MercadoPagoClient implements MercadoPagoGateway {
     }
 
 
-    private Map<String, Object> createPayload() {
+    private Map<String, Object> createPayload(BigDecimal amount, String description) {
         Map<String, Object> item = new HashMap<>();
-        item.put("title", "Pagamento teste");
+        item.put("title", description);
         item.put("quantity", 1);
-        item.put("unit_price", 100);
+        item.put("unit_price", amount);
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("items", List.of(item));

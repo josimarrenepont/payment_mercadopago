@@ -67,7 +67,9 @@ public class OrderEntity {
                 order.loadItem(itemEntity.toDomain());
             });
         }
-
+        if(this.discountAmount != null && this.discountAmount.compareTo(BigDecimal.ZERO) > 0){
+            order.setDiscountAmountFromDatabase(this.discountAmount);
+        }
         return order;
     }
 }

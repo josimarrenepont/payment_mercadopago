@@ -29,13 +29,16 @@ public class CreateCheckoutUseCaseTest {
     }
     @Test
     void shouldSuccessfullyCreateCheckout(){
-        Payment payment = new Payment(1L, "PENDING", new BigDecimal("100.00"));
-        when(gateway.createCheckoutPreference()).thenReturn("https://link-mercado-pago.com");
+        BigDecimal amount = new BigDecimal("100.00");
+        Payment payment = new Payment(1L, "PENDING", amount);
+        when(gateway.createCheckoutPreference(any(BigDecimal.class), anyString()))
+                .thenReturn("https://link-mercado-pago.com");
 
         String link = useCase.execute(payment);
 
         assertEquals("https://link-mercado-pago.com", link);
 
+        verify(gateway).createCheckoutPreference(eq(amount), anyString());
         verify(storagePort, times(1)).save(payment);
     }
 
