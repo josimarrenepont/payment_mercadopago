@@ -5,6 +5,7 @@ import com.projeto.mercadopago.order.core.domain.exception.OrderAlreadyPaidExcep
 import com.projeto.mercadopago.order.entrypoint.dto.OrderItemRequestDTO;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -22,15 +23,13 @@ public class Order {
     private OrderStatus status;
     private final Set<OrderItem> items = new HashSet<>();
 
-    private BigDecimal total;
-    private BigDecimal discountAmount = BigDecimal.ZERO;
+    private BigDecimal discountPercentage = BigDecimal.ZERO;
 
     public Order(String description){
         this.id = null;
         this.moment = Instant.now();
         this.status = OrderStatus.PENDING;
         this.description = description;
-        this.total = BigDecimal.ZERO;
     }
 
     public Order(Long id, Instant moment, String transactionId, String description, OrderStatus status) {
@@ -39,7 +38,6 @@ public class Order {
         this.transactionId = transactionId;
         this.description = description;
         this.status = status;
-        this.total = BigDecimal.ZERO;
     }
 
     public void pay(String transactionId){
@@ -52,10 +50,13 @@ public class Order {
         this.transactionId = transactionId;
         this.status = OrderStatus.PAID;
     }
-
+    public BigDecimal getTotal() {
+        BigDecimal total = calculateTotal();
+        BigDecimal discountValue = total.multiply(discountPercentage).setScale(2, RoundingMode.HALF_UP);
+        return total.subtract(discountValue);
+    }
     public void loadItem(OrderItem item){
         this.items.add(item);
-        this.total = calculateTotal();
     }
 
     public void addItem(OrderItem item){
@@ -70,7 +71,6 @@ public class Order {
                         existingItem -> existingItem.addQuantity(item.getQuantity()),
                         () -> this.items.add(item)
                 );
-        this.total = calculateTotal().subtract(this.discountAmount);
     }
 
     public void addItemsFromRequest(List<OrderItemRequestDTO> itemsDto){
@@ -85,14 +85,7 @@ public class Order {
             throw new InvalidOrderOperationException("Discount exceeds maximum limit");
         }
 
-        this.discountAmount = calculateTotal().multiply(discountPercentage);
-        this.total = calculateTotal().subtract(this.discountAmount);
-
-    }
-
-    public void setDiscountAmountFromDatabase(BigDecimal discountAmount) {
-        this.discountAmount = discountAmount;
-        this.total = calculateTotal().subtract(discountAmount);
+        this.discountPercentage = discountPercentage;
     }
 
     public BigDecimal calculateTotal(){
@@ -101,6 +94,21 @@ public class Order {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    public BigDecimal getDiscountAmount() {
+        return calculateTotal().multiply(discountPercentage)
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountAmountFromDatabase(BigDecimal discountAmount) {
+        BigDecimal grossTotal = calculateTotal();
+        if(grossTotal.compareTo(BigDecimal.ZERO) > 0 && discountAmount != null){
+            this.discountPercentage = discountAmount.divide(grossTotal, 4, RoundingMode.HALF_UP);
+        }
+    }
     public Long getId() {
         return id;
     }
@@ -119,14 +127,6 @@ public class Order {
 
     public OrderStatus getStatus() {
         return status;
-    }
-
-    public BigDecimal getTotal() {
-        return total;
-    }
-
-    public BigDecimal getDiscountAmount() {
-        return discountAmount;
     }
 
     public Set<OrderItem> getItems(){

@@ -14,8 +14,9 @@ public record OrderResponseDTO(
         BigDecimal total,
         BigDecimal discountAmount,
         OrderStatus status,
-        String transactionId
-) {
+        String transactionId,
+        BigDecimal discountPercentage) {
+
     public static OrderResponseDTO fromDomain(Order order) {
         return new OrderResponseDTO(
                 order.getId(),
@@ -24,7 +25,8 @@ public record OrderResponseDTO(
                 order.getTotal(),
                 order.getDiscountAmount(),
                 order.getStatus(),
-                order.getTransactionId()
+                order.getTransactionId(),
+                order.getDiscountPercentage()
         );
     }
 }

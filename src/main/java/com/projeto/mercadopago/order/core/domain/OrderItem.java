@@ -52,17 +52,16 @@ public class OrderItem {
     public void addQuantity(Integer quantityToAdd) {
         this.quantity += quantityToAdd;
     }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (!(object instanceof OrderItem orderItem)) return false;
-        return Objects.equals(getId(), orderItem.getId());
+        return Objects.equals(getProductId(), orderItem.getProductId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hashCode(getProductId());
     }
-
-
 }
