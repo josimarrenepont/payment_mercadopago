@@ -77,4 +77,48 @@ public class OrderTest {
         assertThrows(InvalidOrderOperationException.class, () -> order.pay(""));
     }
 
+    @Test
+    @DisplayName("Should remove item successfully when it exists and order is pending")
+    void shouldRemoveItemSuccessfully(){
+
+        Order order = createPendingOrder();
+
+        OrderItem item = new OrderItem(1L, 100L, new BigDecimal("50.00"), 1);
+
+        order.addItem(item);
+
+        assertEquals(1L, order.getItems().size());
+        order.removeItem(100L);
+
+        assertTrue(order.getItems().isEmpty());
+        assertEquals(BigDecimal.ZERO, order.calculateTotal());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when trying to clear items from a paid order")
+    void shouldRemoveAllItemsSuccessfully(){
+        Order order = createPendingOrder();
+
+        OrderItem item1 = new OrderItem(1L, 100L, new BigDecimal("50.00"), 1);
+        OrderItem item2 = new OrderItem(2L, 101L, new BigDecimal("50.00"), 1);
+
+        order.addItem(item1);
+        order.addItem(item2);
+
+        assertEquals(2, order.getItems().size());
+        order.clearAllItems();
+
+        assertTrue(order.getItems().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when trying to clear items from a paid order")
+    void shouldThrowExceptionWhenClearingItemsFromPaidOrder(){
+
+        Order order = createPendingOrder();
+        order.addItem(new OrderItem(1L, 100L, BigDecimal.TEN, 1));
+        order.pay("tx-123");
+
+        assertThrows(InvalidOrderOperationException.class, order::clearAllItems);
+    }
 }

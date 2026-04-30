@@ -12,6 +12,7 @@ public class UpdateOrderStatusUseCase {
     public UpdateOrderStatusUseCase(OrderStoragePort storagePort) {
         this.storagePort = storagePort;
     }
+
     public void execute(Long orderId, String transactionId){
         Order order = storagePort.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));

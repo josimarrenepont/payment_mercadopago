@@ -133,6 +133,26 @@ public class Order {
         return java.util.Collections.unmodifiableSet(items);
     }
 
+    public void removeItem(Long productId){
+        if(this.status != OrderStatus.PENDING){
+            throw new InvalidOrderOperationException("Cannot remove items from a non-pending order");
+        }
+
+        boolean removed = items.removeIf(item -> item.getProductId().equals(productId));
+
+        if(!removed){
+            throw new InvalidOrderOperationException("Item not found in order");
+        }
+    }
+
+    public void clearAllItems(){
+        if(this.status != OrderStatus.PENDING){
+            throw new InvalidOrderOperationException("Cannot clear items from a non-pending order");
+        }
+
+        this.items.clear();
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;

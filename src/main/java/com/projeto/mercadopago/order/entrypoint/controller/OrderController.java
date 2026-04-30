@@ -1,9 +1,7 @@
 package com.projeto.mercadopago.order.entrypoint.controller;
 
 import com.projeto.mercadopago.order.core.domain.Order;
-import com.projeto.mercadopago.order.core.usecase.CreateOrderUseCase;
-import com.projeto.mercadopago.order.core.usecase.FindOrderUseCase;
-import com.projeto.mercadopago.order.core.usecase.UpdateOrderStatusUseCase;
+import com.projeto.mercadopago.order.core.usecase.*;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderRequestDTO;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,12 +24,16 @@ public class OrderController {
     private final CreateOrderUseCase createOrderUseCase;
     private final FindOrderUseCase findOrderUseCase;
     private final UpdateOrderStatusUseCase updateOrderStatusUseCase;
+    private final RemoveItemFromOrderUseCase removeItemFromOrderUseCase;
+    private final RemoveAllItemsFromOrderUsecase removeAllItemsFromOrderUsecase;
 
     public OrderController(CreateOrderUseCase createOrderUseCase,
-                           FindOrderUseCase findOrderUseCase, UpdateOrderStatusUseCase updateOrderStatusUseCase) {
+                           FindOrderUseCase findOrderUseCase, UpdateOrderStatusUseCase updateOrderStatusUseCase, RemoveItemFromOrderUseCase removeItemFromOrderUseCase, RemoveAllItemsFromOrderUsecase removeAllItemsFromOrderUsecase) {
         this.createOrderUseCase = createOrderUseCase;
         this.findOrderUseCase = findOrderUseCase;
         this.updateOrderStatusUseCase = updateOrderStatusUseCase;
+        this.removeItemFromOrderUseCase = removeItemFromOrderUseCase;
+        this.removeAllItemsFromOrderUsecase = removeAllItemsFromOrderUsecase;
     }
 
     @PostMapping
@@ -82,5 +84,39 @@ public class OrderController {
         log.info("Order status updated successfully for order: {}", id);
         return ResponseEntity.noContent().build();
 
+    }
+
+    @DeleteMapping("/{orderId}/items/{productId}")
+    @Operation(summary = "Remove a specific item")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Item removed successfully"),
+            @ApiResponse(responseCode = "404", description = "Order or Item not found"),
+            @ApiResponse(responseCode = "400", description = "Order is not in PENDING status")
+    })
+    public ResponseEntity<OrderResponseDTO> removeItem(@PathVariable Long orderId, @PathVariable Long productId){
+
+        log.info("Request to remove item {} from order {}", productId, orderId);
+
+        Order updatedOrder = removeItemFromOrderUseCase.execute(orderId, productId);
+
+        log.info("Item {} removed. Order {} total updated to: {}", productId, orderId, updatedOrder.getTotal());
+        return ResponseEntity.ok(OrderResponseDTO.fromDomain(updatedOrder));
+    }
+
+    @DeleteMapping("/{orderId}/items")
+    @Operation(summary = "Remove all items (clear cart)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All items removed successfully"),
+            @ApiResponse(responseCode = "404", description = "Order not found"),
+            @ApiResponse(responseCode = "400", description = "Order is not in PENDING status")
+    })
+    public ResponseEntity<OrderResponseDTO> clearAllItems(@PathVariable Long orderId){
+
+        log.info("Request to clear all items from order {}", orderId);
+
+        Order updatedOrder = removeAllItemsFromOrderUsecase.execute(orderId);
+
+        log.info("Order {} is now empty. Total: {}", orderId, updatedOrder.getTotal());
+        return ResponseEntity.ok(OrderResponseDTO.fromDomain(updatedOrder));
     }
 }

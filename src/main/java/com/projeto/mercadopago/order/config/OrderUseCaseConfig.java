@@ -2,9 +2,7 @@
 
     import com.projeto.mercadopago.order.core.port.CouponStoragePort;
     import com.projeto.mercadopago.order.core.port.OrderStoragePort;
-    import com.projeto.mercadopago.order.core.usecase.CreateOrderUseCase;
-    import com.projeto.mercadopago.order.core.usecase.FindOrderUseCase;
-    import com.projeto.mercadopago.order.core.usecase.UpdateOrderStatusUseCase;
+    import com.projeto.mercadopago.order.core.usecase.*;
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
 
@@ -22,5 +20,13 @@
         @Bean
         UpdateOrderStatusUseCase updateOrderStatusUseCase(OrderStoragePort storagePort){
             return new UpdateOrderStatusUseCase(storagePort);
+        }
+        @Bean
+        RemoveItemFromOrderUseCase removeItemFromOrderUseCase(OrderStoragePort storagePort){
+            return new RemoveItemFromOrderUseCase(storagePort);
+        }
+        @Bean
+        RemoveAllItemsFromOrderUsecase removeAllItemsFromOrderUsecase(OrderStoragePort storagePort){
+            return new RemoveAllItemsFromOrderUsecase(storagePort);
         }
     }
