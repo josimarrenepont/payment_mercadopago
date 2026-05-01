@@ -1,8 +1,10 @@
 package com.projeto.mercadopago.order.core.usecase;
 
 import com.projeto.mercadopago.order.core.domain.Order;
+import com.projeto.mercadopago.order.core.domain.exception.InvalidOrderOperationException;
 import com.projeto.mercadopago.order.core.domain.exception.OrderNotFoundException;
 import com.projeto.mercadopago.order.core.port.OrderStoragePort;
+import com.projeto.mercadopago.order.core.usecase.model.OrderResponse;
 
 public class RemoveItemFromOrderUseCase {
 
@@ -12,12 +14,27 @@ public class RemoveItemFromOrderUseCase {
         this.storagePort = storagePort;
     }
 
-    public Order execute(Long orderId, Long productId){
+    public OrderResponse execute(Long orderId, Long productId) {
 
-        Order order = storagePort.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not Found"));
+        Order order = storagePort.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order with ID " + orderId + " not found"));
 
-        order.removeItem(productId);
+        if (order.getStatus() != com.projeto.mercadopago.order.core.domain.OrderStatus.PENDING) {
+            throw new InvalidOrderOperationException(
+                    "Cannot remove items from order with status: " + order.getStatus()
+            );
+        }
 
-        return storagePort.save(order);
+        try {
+            order.removeItem(productId);
+        } catch (InvalidOrderOperationException e) {
+            throw new InvalidOrderOperationException(
+                    "Failed to remove product " + productId + " from order " + orderId + ": " + e.getMessage()
+            );
+        }
+
+        Order savedOrder = storagePort.save(order);
+
+        return OrderResponse.fromDomain(savedOrder);
     }
 }

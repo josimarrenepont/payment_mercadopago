@@ -1,19 +1,21 @@
 package com.projeto.mercadopago.order.entrypoint.controller;
 
-import com.projeto.mercadopago.order.core.domain.Order;
 import com.projeto.mercadopago.order.core.usecase.*;
+import com.projeto.mercadopago.order.core.usecase.model.CreateOrderCommand;
+import com.projeto.mercadopago.order.core.usecase.model.OrderItemCommand;
+import com.projeto.mercadopago.order.core.usecase.model.OrderResponse;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderRequestDTO;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -28,7 +30,10 @@ public class OrderController {
     private final RemoveAllItemsFromOrderUsecase removeAllItemsFromOrderUsecase;
 
     public OrderController(CreateOrderUseCase createOrderUseCase,
-                           FindOrderUseCase findOrderUseCase, UpdateOrderStatusUseCase updateOrderStatusUseCase, RemoveItemFromOrderUseCase removeItemFromOrderUseCase, RemoveAllItemsFromOrderUsecase removeAllItemsFromOrderUsecase) {
+                           FindOrderUseCase findOrderUseCase,
+                           UpdateOrderStatusUseCase updateOrderStatusUseCase,
+                           RemoveItemFromOrderUseCase removeItemFromOrderUseCase,
+                           RemoveAllItemsFromOrderUsecase removeAllItemsFromOrderUsecase) {
         this.createOrderUseCase = createOrderUseCase;
         this.findOrderUseCase = findOrderUseCase;
         this.updateOrderStatusUseCase = updateOrderStatusUseCase;
@@ -43,14 +48,26 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "Invalid request")
     })
     public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO requestDTO) {
+        log.info("Request to create order with description: {}", requestDTO.description());
 
-        Order order = new Order(requestDTO.description());
+        CreateOrderCommand command = new CreateOrderCommand(
+                requestDTO.description(),
+                requestDTO.couponCode(),
+                requestDTO.items().stream()
+                        .map(item -> new OrderItemCommand(
+                                item.productId(),
+                                item.price(),
+                                item.quantity()))
+                        .collect(Collectors.toList())
+        );
 
-        order.addItemsFromRequest(requestDTO.items());
+        OrderResponse response = createOrderUseCase.execute(command);
 
-        Order savedOrder = createOrderUseCase.execute(order, requestDTO.couponCode());
+        OrderResponseDTO responseDTO = convertToDTO(response);
 
-        return ResponseEntity.ok(OrderResponseDTO.fromDomain(savedOrder));
+        log.info("Order created successfully with ID: {}", responseDTO.id());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @GetMapping("/{id}")
@@ -60,9 +77,14 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Order not found")
     })
     public ResponseEntity<OrderResponseDTO> findById(@PathVariable Long id) {
-        Order order = findOrderUseCase.execute(id);
+        log.info("Searching for order ID: {}", id);
 
-        return ResponseEntity.ok(OrderResponseDTO.fromDomain(order));
+        OrderResponse response = findOrderUseCase.execute(id);
+
+        OrderResponseDTO responseDTO = convertToDTO(response);
+
+        log.info("Order ID: {} found with status: {}", id, responseDTO.status());
+        return ResponseEntity.ok(responseDTO);
     }
 
     @Operation(
@@ -83,7 +105,6 @@ public class OrderController {
 
         log.info("Order status updated successfully for order: {}", id);
         return ResponseEntity.noContent().build();
-
     }
 
     @DeleteMapping("/{orderId}/items/{productId}")
@@ -93,14 +114,15 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Order or Item not found"),
             @ApiResponse(responseCode = "400", description = "Order is not in PENDING status")
     })
-    public ResponseEntity<OrderResponseDTO> removeItem(@PathVariable Long orderId, @PathVariable Long productId){
-
+    public ResponseEntity<OrderResponseDTO> removeItem(@PathVariable Long orderId, @PathVariable Long productId) {
         log.info("Request to remove item {} from order {}", productId, orderId);
 
-        Order updatedOrder = removeItemFromOrderUseCase.execute(orderId, productId);
+        OrderResponse response = removeItemFromOrderUseCase.execute(orderId, productId);
 
-        log.info("Item {} removed. Order {} total updated to: {}", productId, orderId, updatedOrder.getTotal());
-        return ResponseEntity.ok(OrderResponseDTO.fromDomain(updatedOrder));
+        OrderResponseDTO responseDTO = convertToDTO(response);
+
+        log.info("Item {} removed. Order {} total updated to: {}", productId, orderId, responseDTO.total());
+        return ResponseEntity.ok(responseDTO);
     }
 
     @DeleteMapping("/{orderId}/items")
@@ -110,13 +132,27 @@ public class OrderController {
             @ApiResponse(responseCode = "404", description = "Order not found"),
             @ApiResponse(responseCode = "400", description = "Order is not in PENDING status")
     })
-    public ResponseEntity<OrderResponseDTO> clearAllItems(@PathVariable Long orderId){
-
+    public ResponseEntity<OrderResponseDTO> clearAllItems(@PathVariable Long orderId) {
         log.info("Request to clear all items from order {}", orderId);
 
-        Order updatedOrder = removeAllItemsFromOrderUsecase.execute(orderId);
+        OrderResponse response = removeAllItemsFromOrderUsecase.execute(orderId);
 
-        log.info("Order {} is now empty. Total: {}", orderId, updatedOrder.getTotal());
-        return ResponseEntity.ok(OrderResponseDTO.fromDomain(updatedOrder));
+        OrderResponseDTO responseDTO = convertToDTO(response);
+
+        log.info("Order {} is now empty. Total: {}", orderId, responseDTO.total());
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    private OrderResponseDTO convertToDTO(OrderResponse response) {
+        return new OrderResponseDTO(
+                response.id(),
+                response.moment(),
+                response.description(),
+                response.total(),
+                response.discountAmount(),
+                response.status(),
+                response.transactionId(),
+                response.discountPercentage()
+        );
     }
 }

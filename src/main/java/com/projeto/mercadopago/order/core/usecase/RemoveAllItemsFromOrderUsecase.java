@@ -3,6 +3,7 @@ package com.projeto.mercadopago.order.core.usecase;
 import com.projeto.mercadopago.order.core.domain.Order;
 import com.projeto.mercadopago.order.core.domain.exception.OrderNotFoundException;
 import com.projeto.mercadopago.order.core.port.OrderStoragePort;
+import com.projeto.mercadopago.order.core.usecase.model.OrderResponse;
 
 public class RemoveAllItemsFromOrderUsecase {
 
@@ -12,12 +13,14 @@ public class RemoveAllItemsFromOrderUsecase {
         this.storagePort = storagePort;
     }
 
-    public Order execute(Long orderId){
-
-        Order order = storagePort.findById(orderId).orElseThrow(() -> new OrderNotFoundException("Order not Found"));
+    public OrderResponse execute(Long orderId) {
+        Order order = storagePort.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not Found"));
 
         order.clearAllItems();
 
-        return storagePort.save(order);
+        Order savedOrder = storagePort.save(order);
+
+        return OrderResponse.fromDomain(savedOrder);
     }
 }

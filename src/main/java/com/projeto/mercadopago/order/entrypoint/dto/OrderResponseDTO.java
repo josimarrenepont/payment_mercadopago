@@ -1,7 +1,6 @@
 package com.projeto.mercadopago.order.entrypoint.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.projeto.mercadopago.order.core.domain.Order;
 import com.projeto.mercadopago.order.core.domain.OrderStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,17 +15,4 @@ public record OrderResponseDTO(
         OrderStatus status,
         String transactionId,
         BigDecimal discountPercentage) {
-
-    public static OrderResponseDTO fromDomain(Order order) {
-        return new OrderResponseDTO(
-                order.getId(),
-                order.getMoment(),
-                order.getDescription(),
-                order.getTotal(),
-                order.getDiscountAmount(),
-                order.getStatus(),
-                order.getTransactionId(),
-                order.getDiscountPercentage()
-        );
-    }
 }
