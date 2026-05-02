@@ -60,7 +60,7 @@ public class OrderEntity {
                 this.transactionId,
                 this.description,
                 this.status
-                );
+        );
 
         if(this.items != null){
             this.items.forEach(itemEntity -> {

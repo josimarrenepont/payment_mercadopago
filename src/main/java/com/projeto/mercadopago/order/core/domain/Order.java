@@ -2,13 +2,12 @@ package com.projeto.mercadopago.order.core.domain;
 
 import com.projeto.mercadopago.order.core.domain.exception.InvalidOrderOperationException;
 import com.projeto.mercadopago.order.core.domain.exception.OrderAlreadyPaidException;
-import com.projeto.mercadopago.order.entrypoint.dto.OrderItemRequestDTO;
+
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -50,11 +49,13 @@ public class Order {
         this.transactionId = transactionId;
         this.status = OrderStatus.PAID;
     }
+
     public BigDecimal getTotal() {
         BigDecimal total = calculateTotal();
         BigDecimal discountValue = total.multiply(discountPercentage).setScale(2, RoundingMode.HALF_UP);
         return total.subtract(discountValue);
     }
+
     public void loadItem(OrderItem item){
         this.items.add(item);
     }
@@ -71,10 +72,6 @@ public class Order {
                         existingItem -> existingItem.addQuantity(item.getQuantity()),
                         () -> this.items.add(item)
                 );
-    }
-
-    public void addItemsFromRequest(List<OrderItemRequestDTO> itemsDto){
-        itemsDto.forEach(dto -> this.addItem(new OrderItem(null, dto.productId(), dto.price(), dto.quantity())));
     }
 
     public void applyDiscount(BigDecimal discountPercentage){

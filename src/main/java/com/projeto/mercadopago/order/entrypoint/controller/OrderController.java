@@ -6,6 +6,7 @@ import com.projeto.mercadopago.order.core.usecase.model.OrderItemCommand;
 import com.projeto.mercadopago.order.core.usecase.model.OrderResponse;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderRequestDTO;
 import com.projeto.mercadopago.order.entrypoint.dto.OrderResponseDTO;
+import com.projeto.mercadopago.order.entrypoint.mapper.OrderMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -63,7 +64,7 @@ public class OrderController {
 
         OrderResponse response = createOrderUseCase.execute(command);
 
-        OrderResponseDTO responseDTO = convertToDTO(response);
+        OrderResponseDTO responseDTO = OrderMapper.toDTO(response);
 
         log.info("Order created successfully with ID: {}", responseDTO.id());
 
@@ -81,7 +82,7 @@ public class OrderController {
 
         OrderResponse response = findOrderUseCase.execute(id);
 
-        OrderResponseDTO responseDTO = convertToDTO(response);
+        OrderResponseDTO responseDTO = OrderMapper.toDTO(response);
 
         log.info("Order ID: {} found with status: {}", id, responseDTO.status());
         return ResponseEntity.ok(responseDTO);
@@ -119,7 +120,7 @@ public class OrderController {
 
         OrderResponse response = removeItemFromOrderUseCase.execute(orderId, productId);
 
-        OrderResponseDTO responseDTO = convertToDTO(response);
+        OrderResponseDTO responseDTO = OrderMapper.toDTO(response);
 
         log.info("Item {} removed. Order {} total updated to: {}", productId, orderId, responseDTO.total());
         return ResponseEntity.ok(responseDTO);
@@ -137,22 +138,9 @@ public class OrderController {
 
         OrderResponse response = removeAllItemsFromOrderUsecase.execute(orderId);
 
-        OrderResponseDTO responseDTO = convertToDTO(response);
+        OrderResponseDTO responseDTO = OrderMapper.toDTO(response);
 
         log.info("Order {} is now empty. Total: {}", orderId, responseDTO.total());
         return ResponseEntity.ok(responseDTO);
-    }
-
-    private OrderResponseDTO convertToDTO(OrderResponse response) {
-        return new OrderResponseDTO(
-                response.id(),
-                response.moment(),
-                response.description(),
-                response.total(),
-                response.discountAmount(),
-                response.status(),
-                response.transactionId(),
-                response.discountPercentage()
-        );
     }
 }
