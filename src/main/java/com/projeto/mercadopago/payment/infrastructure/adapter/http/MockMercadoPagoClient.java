@@ -13,6 +13,6 @@ public class MockMercadoPagoClient implements MercadoPagoGateway {
     @Override
     public String createCheckoutPreference(BigDecimal amount, String description) {
         // Retorna init_point fake para dev/portfólio
-        return "https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=MOCK";
+        return "https://sandbox.mercadopago.com.br/checkout/v1/redirect?pref_id=MOCK" + System.currentTimeMillis();
     }
 }

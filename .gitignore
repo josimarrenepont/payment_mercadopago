@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# .gitignore
+application-prod.properties
+application-dev-local.properties
+application-test.properties
+application-dev.properties
+application.properties
+*.secret
+*.key

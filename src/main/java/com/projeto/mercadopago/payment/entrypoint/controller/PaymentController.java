@@ -1,72 +1,45 @@
 package com.projeto.mercadopago.payment.entrypoint.controller;
 
-import com.projeto.mercadopago.payment.core.domain.Payment;
-import com.projeto.mercadopago.payment.core.usecase.CreateCheckoutUseCase;
+import com.projeto.mercadopago.payment.core.usecase.CreatePaymentUseCase;
 import com.projeto.mercadopago.payment.core.usecase.FindPaymentUseCase;
+import com.projeto.mercadopago.payment.core.usecase.model.CreatePaymentCommand;
+import com.projeto.mercadopago.payment.core.usecase.model.PaymentResponse;
 import com.projeto.mercadopago.payment.entrypoint.dto.PaymentRequestDTO;
-import com.projeto.mercadopago.payment.entrypoint.dto.PaymentStatusDTO;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import com.projeto.mercadopago.payment.entrypoint.dto.PaymentResponseDTO;
+import com.projeto.mercadopago.payment.entrypoint.mapper.PaymentMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/v1/payments")
 public class PaymentController {
 
-    private final CreateCheckoutUseCase createCheckoutUseCase;
+    private final CreatePaymentUseCase createPaymentUseCase;
     private final FindPaymentUseCase findPaymentUseCase;
 
-    public PaymentController(CreateCheckoutUseCase createCheckoutUseCase,
+    public PaymentController(CreatePaymentUseCase createPaymentUseCase,
                              FindPaymentUseCase findPaymentUseCase) {
-        this.createCheckoutUseCase = createCheckoutUseCase;
+        this.createPaymentUseCase = createPaymentUseCase;
         this.findPaymentUseCase = findPaymentUseCase;
     }
 
     @PostMapping("/checkout")
-    @Operation(summary = "Create checkout", description = "Creates a checkout session for a payment.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Checkout created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request")
-    })
-    public ResponseEntity<PaymentStatusDTO> createCheckout(@RequestBody PaymentRequestDTO request) {
-        Payment payment = new Payment(
-                request.productId(),
-                "PENDING",
-                request.amount()
-        );
+    public ResponseEntity<PaymentResponseDTO> createCheckout(@RequestBody PaymentRequestDTO request) {
 
-        String initPOint = createCheckoutUseCase.execute(payment);
+        CreatePaymentCommand command = PaymentMapper.toCommand(request);
 
-        PaymentStatusDTO response = new PaymentStatusDTO(
-                payment.getId(),
-                payment.getStatus(),
-                payment.getTransactionAmount(),
-                "BR",
-                Instant.now()
-        );
+        PaymentResponse response = createPaymentUseCase.execute(command);
 
-        return ResponseEntity.ok().body(response);
+        PaymentResponseDTO responseDTO = PaymentMapper.toDTO(response);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-    @GetMapping("/{id}")
-    @Operation(summary = "Search Payment for ID", description = "Returns the payment details based on the provided ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Payment successfully found"),
-            @ApiResponse(responseCode = "404", description = "Payment not found")
-    })
-    public ResponseEntity<PaymentStatusDTO> getPaymentStatus(@PathVariable Long id){
-        Payment payment = findPaymentUseCase.execute(id);
 
-        PaymentStatusDTO dto = new PaymentStatusDTO(
-                payment.getId(),
-                payment.getStatus(),
-                payment.getTransactionAmount(),
-                "BR",
-                Instant.now()
-        );
-        return ResponseEntity.ok(dto);
+    @GetMapping("/{paymentId}")
+    public ResponseEntity<PaymentResponseDTO> getPayment(@PathVariable Long paymentId) {
+        PaymentResponse response = findPaymentUseCase.execute(paymentId);
+        PaymentResponseDTO responseDTO = PaymentMapper.toDTO(response);
+        return ResponseEntity.ok(responseDTO);
     }
 }

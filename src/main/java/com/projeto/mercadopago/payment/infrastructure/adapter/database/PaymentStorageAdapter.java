@@ -1,11 +1,10 @@
-// src/main/java/com/projeto/mercadopago/payment/core/dataprovider/database/PaymentStorageAdapter.java
 package com.projeto.mercadopago.payment.infrastructure.adapter.database;
 
 import com.projeto.mercadopago.payment.core.port.PaymentStoragePort;
 import com.projeto.mercadopago.payment.core.domain.Payment;
 import com.projeto.mercadopago.payment.infrastructure.adapter.database.entity.PaymentEntity;
 import com.projeto.mercadopago.payment.infrastructure.adapter.database.repository.PaymentRepository;
-import org.springframework.stereotype.Component; // Adicione esta anotação
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
